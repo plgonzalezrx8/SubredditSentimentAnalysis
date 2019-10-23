@@ -9,12 +9,16 @@ class AnalysisClient(object):
     """The Get Comments method is a clusterfuck, I need to fix it and make it work
     with the comments from the txt files"""
 
-    def get_comments(self, count=10):
+    def get_comments(self, subreddit, count=10):
         # Main function to fetch comments and parse them.
         # empty list to store parsed comments
         comments = []
 
-        with open("parsed_comments/enoughtrumpspam.txt", encoding='utf8') as li:
+        filename = "parsed_comments/" + subreddit + ".txt"
+
+
+
+        with open(filename, encoding='utf8') as li:
             comments = li.readlines()
             li.close()
 
@@ -71,7 +75,7 @@ def main():
     # creating object of AnalysisClient Class
     api = AnalysisClient()
     # calling function to get parse comments from txt files
-    comments = api.get_comments(count=200)
+    comments = api.get_comments("enoughtrumpspam", count=200)
 
 
 
