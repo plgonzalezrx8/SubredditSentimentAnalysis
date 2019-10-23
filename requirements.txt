@@ -1,0 +1,4 @@
+PRAW
+textblob
+#corpora for nltk
+requests[security]
