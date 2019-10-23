@@ -35,12 +35,12 @@ cache = []  # cache to keep track of parsed comments
 
 
 # this will get all the comments for the last 500 posts for that specific subreddit.
-def run_bot(subredditName):
-    print("Parsing comments from " + subredditName)
+def run_bot(subreddit_name):
+    print("Parsing comments from " + subreddit_name)
     # just type the subreddit name, do not use /r/ or anything else
-    subreddit = r.subreddit(subredditName)
-    fileName = "parsed_comments/" + subredditName + ".txt"
-    print("Grabbing comments from " + subredditName)
+    subreddit = r.subreddit(subreddit_name)
+    file_name = "parsed_comments/" + subreddit_name + ".txt"
+    print("Grabbing comments from " + subreddit_name)
     submissions = subreddit.hot(limit=500)
     for submission in submissions:
         submission.comments.replace_more(limit=0)
@@ -50,8 +50,8 @@ def run_bot(subredditName):
             comment = comment_queue.pop(0)
             comment_text = comment.body.lower()
             if comment.id not in cache:
-                print(subredditName + "=====" + comment_text)
-                with open(fileName, "a", encoding="utf8") as myfile:
+                print(subreddit_name + "=====" + comment_text)
+                with open(file_name, "a", encoding="utf8") as myfile:
                     try:
                         myfile.write(" " + comment_text + "\n")
                     except UnicodeEncodeError:

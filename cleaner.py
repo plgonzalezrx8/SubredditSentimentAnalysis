@@ -1,4 +1,3 @@
-
 import glob
 
 counter = 0
@@ -20,11 +19,11 @@ def cleanemptylines(filename):
         # Strip whitespace, should leave nothing if empty line was just "\n"
         if not line.strip():
             continue
-    # We got something, save it
+        # We got something, save it
         else:
             new_contents.append(line)
 
-# make new file without empty lines
+    # make new file without empty lines
 
     fd = open(filename, "w", encoding="utf8")
 
@@ -33,6 +32,7 @@ def cleanemptylines(filename):
     fd.close()
 
     print("Cleaning Complete")
+
 
 # this line will gather all the txt files in the directory, might need some tweaking to work in your environment.
 
@@ -45,5 +45,3 @@ txt_file_list = glob.glob("parsed_comments/*.txt")
 
 for i in txt_file_list:
     cleanemptylines(i)
-
-
