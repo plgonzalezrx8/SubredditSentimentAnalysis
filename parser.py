@@ -25,7 +25,7 @@ client_id = config['DEFAULT']['client_id']
 client_secret = config['DEFAULT']['client_secret']
 user_agent = config['DEFAULT']['user_agent']
 
-# reffer to the praw documentation for more info on clientID and client_secret. (API Keys)
+# reefer to the praw documentation for more info on clientID and client_secret. (API Keys)
 r = praw.Reddit(username=username, password=password, client_id=client_id, client_secret=client_secret,
                 user_agent=user_agent)
 print("Logging in...")
