@@ -16,3 +16,5 @@ I highly suggest that you run this program using a Virtualenv to avoid any issue
 -add Installation instructions
 
 -make the output pretty
+
+-Export the results into a txt file and a csv file.

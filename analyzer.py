@@ -89,6 +89,4 @@ def main():
         print("Total comments analysed: " + str(len(comments)))
 
 
-
-
 main()
