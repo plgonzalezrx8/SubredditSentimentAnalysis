@@ -1,5 +1,5 @@
 configparser==4.0.2
-nltk==3.4.5
+nltk==3.9
 praw==6.4.0
 prawcore==1.0.1
 pycparser==2.19
