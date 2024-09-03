@@ -1,0 +1,6 @@
+configparser
+nltk
+praw
+prawcore
+pycparser
+textblob
