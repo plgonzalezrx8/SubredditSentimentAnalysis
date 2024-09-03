@@ -2,6 +2,7 @@ import threading
 import praw
 import time
 import os
+from queue import Queue
 from prawcore.exceptions import PrawcoreException
 import configparser
 
@@ -26,6 +27,9 @@ os.makedirs("parsed_comments", exist_ok=True)
 # Use a set for faster lookup
 comment_cache = set()
 
+# Create a thread-safe queue for subreddits
+subreddit_queue = Queue()
+
 
 def run_bot(subreddit_name):
     print(f"Parsing comments from {subreddit_name}")
@@ -39,17 +43,14 @@ def run_bot(subreddit_name):
                 for comment in submission.comments.list():
                     if comment.id not in comment_cache:
                         comment_text = comment.body.lower()
-                        print(
-                            f"{subreddit_name}====={comment_text[:50]}..."
-                        )  # Print first 50 chars
+                        print(f"{subreddit_name}====={comment_text[:50]}...")
 
                         with open(file_name, "a", encoding="utf-8") as myfile:
                             myfile.write(f"{comment_text}\n")
 
                         comment_cache.add(comment.id)
 
-                # Respect Reddit's rate limits
-                time.sleep(2)
+                time.sleep(2)  # Respect Reddit's rate limits
 
             except PrawcoreException as e:
                 print(f"Error processing submission in {subreddit_name}: {e}")
@@ -57,6 +58,15 @@ def run_bot(subreddit_name):
 
     except PrawcoreException as e:
         print(f"Error accessing subreddit {subreddit_name}: {e}")
+
+
+def worker():
+    while True:
+        subreddit = subreddit_queue.get()
+        if subreddit is None:
+            break
+        run_bot(subreddit)
+        subreddit_queue.task_done()
 
 
 def main():
@@ -98,18 +108,31 @@ def main():
         "bipolar",
         "schizophrenia",
         "autism",
-    ]  # Add more subreddits as needed
+    ]
 
+    # Number of worker threads
+    num_worker_threads = 4
+
+    # Create worker threads
     threads = []
-    for subreddit in subredditsToParse:
-        thread = threading.Thread(target=run_bot, args=(subreddit,))
-        thread.start()
-        threads.append(thread)
-        time.sleep(2)  # Stagger thread starts
+    for _ in range(num_worker_threads):
+        t = threading.Thread(target=worker)
+        t.start()
+        threads.append(t)
+        time.sleep(10)  # Stagger thread starts
 
-    # Wait for all threads to complete
-    for thread in threads:
-        thread.join()
+    # Add subreddits to the queue
+    for subreddit in subredditsToParse:
+        subreddit_queue.put(subreddit)
+
+    # Block until all tasks are done
+    subreddit_queue.join()
+
+    # Stop workers
+    for _ in range(num_worker_threads):
+        subreddit_queue.put(None)
+    for t in threads:
+        t.join()
 
 
 if __name__ == "__main__":
