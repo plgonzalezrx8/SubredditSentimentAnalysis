@@ -4,6 +4,7 @@ import glob
 from collections import Counter
 import os
 import sys
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 
 class AnalysisClient:
@@ -17,13 +18,14 @@ class AnalysisClient:
 
     @staticmethod
     def get_comment_sentiment(comment):
-        analysis = TextBlob(AnalysisClient.clean_comment(comment))
-        if analysis.sentiment.polarity > 0:
+        analyzer = SentimentIntensityAnalyzer()
+        sentiment = analyzer.polarity_scores(comment)
+        if sentiment["compound"] >= 0.05:
             return "positive"
-        elif analysis.sentiment.polarity == 0:
-            return "neutral"
-        else:
+        elif sentiment["compound"] <= -0.05:
             return "negative"
+        else:
+            return "neutral"
 
     @staticmethod
     def analyze_comments(filename, keywords=None):
