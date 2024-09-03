@@ -1,6 +1,4 @@
 import re
-from textblob import TextBlob
-import glob
 from collections import Counter
 import os
 import sys
@@ -68,13 +66,13 @@ def print_sentiment_analysis(sentiment_counts, total, label=""):
 
 
 def main():
-    txt_file_list = glob.glob("parsed_comments/*.txt")
+    txt_file_list = [f for f in os.listdir("parsed_comments") if f.endswith(".txt")]
     keywords = sys.argv[1].split() if len(sys.argv) > 1 else None
 
     for file in txt_file_list:
         subreddit = get_subreddit_name(file)
         overall_sentiments, keyword_sentiments = AnalysisClient.analyze_comments(
-            file, keywords
+            os.path.join("parsed_comments", file), keywords
         )
 
         print(f"\nAnalysis for {subreddit}:")
