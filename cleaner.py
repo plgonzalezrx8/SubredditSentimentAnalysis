@@ -1,47 +1,48 @@
 import glob
-
-counter = 0
-cache = []
+import os
 
 
-# Get rid of empty lines
-def cleanemptylines(filename):
-    print("Now cleaning the text file for whitespaces")
-    print("Current file is %s " % (filename))
-    # Get file contents
-    fd = open(filename, encoding="utf8")
-    contents = fd.readlines()
-    fd.close()
+def clean_empty_lines(filename):
+    """Remove empty lines from a file."""
+    print(f"Cleaning whitespace from {filename}")
 
-    new_contents = []
+    try:
+        # Read file contents
+        with open(filename, "r", encoding="utf-8") as file:
+            lines = file.readlines()
 
-    for line in contents:
-        # Strip whitespace, should leave nothing if empty line was just "\n"
-        if not line.strip():
-            continue
-        # We got something, save it
-        else:
-            new_contents.append(line)
+        # Filter out empty lines
+        cleaned_lines = [line for line in lines if line.strip()]
 
-    # make new file without empty lines
+        # Write cleaned contents back to file
+        with open(filename, "w", encoding="utf-8") as file:
+            file.writelines(cleaned_lines)
 
-    fd = open(filename, "w", encoding="utf8")
+        print(f"Successfully cleaned {filename}")
 
-    fd.write("".join(new_contents))
-    print("successfully done")
-    fd.close()
-
-    print("Cleaning Complete")
+    except IOError as e:
+        print(f"Error processing {filename}: {e}")
+    except Exception as e:
+        print(f"Unexpected error processing {filename}: {e}")
 
 
-# this line will gather all the txt files in the directory, might need some tweaking to work in your environment.
+def main():
+    # Get all txt files in the parsed_comments directory
+    parsed_comments_dir = "parsed_comments"
+    txt_files = glob.glob(os.path.join(parsed_comments_dir, "*.txt"))
+
+    if not txt_files:
+        print(f"No text files found in {parsed_comments_dir}")
+        return
+
+    print(f"Found {len(txt_files)} text files to clean")
+
+    # Clean each file
+    for file in txt_files:
+        clean_empty_lines(file)
+
+    print("Cleaning process completed")
 
 
-txt_file_list = glob.glob("parsed_comments/*.txt")
-
-# this will clean all the txt files in the current directory.
-# By cleaning I mean removing all the spaces and unsupported symbols.
-
-
-for i in txt_file_list:
-    cleanemptylines(i)
+if __name__ == "__main__":
+    main()
